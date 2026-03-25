@@ -1,0 +1,40 @@
+{
+  "name": "gims",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "dev:web": "cd apps/web && pnpm install && pnpm dev",
+    "dev:api": "cd apps/api && docker compose down -v && docker compose up -d --build",
+    "dev:web-api": "pnpm run dev:api & pnpm run dev:web",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "type-check": "turbo run check-types",
+    "test": "turbo run test",
+    "clean": "turbo run clean"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "prettier": "^3.6.2",
+    "turbo": "^2.6.1",
+    "typescript": "5.9.2"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@types/leaflet": "^1.9.21",
+    "leaflet": "^1.9.4",
+    "react-leaflet": "^5.0.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "ajv": "6.14.0",
+      "flatted": "3.4.0",
+      "minimatch": "9.0.7",
+      "js-yaml": "4.1.1"
+    }
+  }
+}
