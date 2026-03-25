@@ -17,8 +17,12 @@ import {
   Activity,
 } from "lucide-react";
 
-import { Globe } from "@/components/landing/globe";
+import dynamic from "next/dynamic";
 import { HeroGraphic } from "@/components/landing/hero-graphic";
+
+const World = dynamic(() => import("@/components/ui/globe").then((m) => m.World), {
+  ssr: false,
+});
 
 // Animation Variants - Elegant, spring-based reveals
 const fadeUp: Variants = {
@@ -101,6 +105,90 @@ const VALUES = [
     icon: ShieldCheck,
     title: "Risk Management",
     description: "Anticipate supply chain disruptions before they impact your business",
+  },
+];
+
+const SAMPLE_ARCS = [
+  {
+    order: 1,
+    startLat: -19.885592,
+    startLng: -43.951191,
+    endLat: -22.9068,
+    endLng: -43.1729,
+    arcAlt: 0.1,
+    color: "#06b6d4",
+  },
+  {
+    order: 1,
+    startLat: 28.6139,
+    startLng: 77.209,
+    endLat: 3.139,
+    endLng: 101.6869,
+    arcAlt: 0.2,
+    color: "#3b82f6",
+  },
+  {
+    order: 1,
+    startLat: -19.885592,
+    startLng: -43.951191,
+    endLat: -1.303396,
+    endLng: 36.852443,
+    arcAlt: 0.5,
+    color: "#6366f1",
+  },
+  {
+    order: 2,
+    startLat: 1.3521,
+    startLng: 103.8198,
+    endLat: 35.6762,
+    endLng: 139.6503,
+    arcAlt: 0.2,
+    color: "#06b6d4",
+  },
+  {
+    order: 2,
+    startLat: 51.5072,
+    startLng: -0.1276,
+    endLat: 3.139,
+    endLng: 101.6869,
+    arcAlt: 0.3,
+    color: "#3b82f6",
+  },
+  {
+    order: 3,
+    startLat: -6.2088,
+    startLng: 106.8456,
+    endLat: 51.5072,
+    endLng: -0.1276,
+    arcAlt: 0.3,
+    color: "#6366f1",
+  },
+  {
+    order: 4,
+    startLat: 11.986597,
+    startLng: 8.571831,
+    endLat: -15.595412,
+    endLng: -56.05918,
+    arcAlt: 0.5,
+    color: "#06b6d4",
+  },
+  {
+    order: 4,
+    startLat: -34.6037,
+    startLng: -58.3816,
+    endLat: 22.3193,
+    endLng: 114.1694,
+    arcAlt: 0.7,
+    color: "#3b82f6",
+  },
+  {
+    order: 4,
+    startLat: 51.5072,
+    startLng: -0.1276,
+    endLat: 48.8566,
+    endLng: -2.3522,
+    arcAlt: 0.1,
+    color: "#6366f1",
   },
 ];
 
@@ -285,7 +373,7 @@ export default function LandingPage() {
                   <motion.div 
                     key={s.title}
                     variants={fadeUpItem}
-                    className={`relative p-10 rounded-3xl ${isDark ? s.span : `bg-white border border-zinc-200 shadow-sm ${s.span}`}`}
+                    className={`relative p-10 rounded-3xl ${isDark ? s.span : "bg-white border border-zinc-200 shadow-sm " + s.span}`}
                   >
                     <s.icon className={`h-8 w-8 mb-8 ${isDark ? "text-primary" : "text-zinc-400"}`} strokeWidth={1.5} />
                     
@@ -341,7 +429,28 @@ export default function LandingPage() {
                className="relative lg:h-[800px] w-full flex items-center justify-center lg:justify-end"
             >
                <div className="w-[500px] h-[500px] lg:w-[800px] lg:h-[800px] opacity-90 right-[-100px] lg:absolute">
-                 <Globe />
+                 <World 
+                    data={SAMPLE_ARCS} 
+                    globeConfig={{
+                      pointSize: 4,
+                      globeColor: "#ffffff",
+                      showAtmosphere: true,
+                      atmosphereColor: "#e5e7eb",
+                      atmosphereAltitude: 0.1,
+                      emissive: "#ffffff",
+                      emissiveIntensity: 0.1,
+                      shininess: 0,
+                      polygonColor: "rgba(39, 39, 42, 0.4)",
+                      ambientLight: "#ffffff",
+                      arcTime: 1000,
+                      arcLength: 0.9,
+                      rings: 1,
+                      maxRings: 3,
+                      initialPosition: { lat: 20, lng: 100 },
+                      autoRotate: true,
+                      autoRotateSpeed: 0.5,
+                    }} 
+                  />
                </div>
             </motion.div>
 
