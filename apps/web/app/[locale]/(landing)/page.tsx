@@ -117,7 +117,7 @@ export default function LandingPage() {
       {/* Background Graphic Component */}
       <div className="absolute top-0 inset-x-0 h-[800px] pointer-events-none -z-10 bg-zinc-50/50 flex items-start justify-center overflow-hidden">
         <HeroGraphic className="w-full max-w-[1200px] h-full opacity-60 mix-blend-multiply text-primary/10" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/80 to-white" />
+        <div className="absolute inset-0 bg-linear-to-b from-transparent via-white/80 to-white" />
       </div>
 
       <div className="relative z-10 w-full flex flex-col">
@@ -351,8 +351,22 @@ export default function LandingPage() {
         {/* ════════════════════════════════════════════════════════
             7. INDUSTRY POSITIONING
         ════════════════════════════════════════════════════════ */}
-        <section className="relative py-24 sm:py-32 bg-zinc-50 border-y border-zinc-200 overflow-hidden">
-          <div className={`${W} grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-32 items-stretch`}>
+        <section className="relative py-24 sm:py-32 border-y border-zinc-200 overflow-hidden">
+          {/* Background Image with Progressing Fade */}
+          <div className="absolute inset-0 pointer-events-none -z-10 bg-zinc-50">
+            <Image
+              src="/logistics_critical_infrastructure_bg.png"
+              alt="Logistics Infrastructure Background"
+              fill
+              className="object-cover object-center opacity-[0.45]"
+              sizes="100vw"
+            />
+            {/* Progressing fades for clean white minimalist look */}
+            <div className="absolute inset-0 bg-linear-to-r from-zinc-50 via-zinc-50/60 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-b from-zinc-50 via-transparent to-zinc-50" />
+          </div>
+
+          <div className={`${W} relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-32 items-center`}>
             
             <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className="flex flex-col justify-center">
               <h2 className="text-3xl sm:text-4xl font-light text-zinc-900 mb-8">
@@ -360,7 +374,7 @@ export default function LandingPage() {
               </h2>
               <div className="space-y-6 text-lg font-light text-zinc-600">
                 <p>Handling high-value goods and time-sensitive cargo with structured precision</p>
-                <div className="h-px w-full bg-zinc-200 my-8" />
+                <div className="h-px w-full bg-zinc-300/60 my-8" />
                 <p className="text-zinc-500 italic">
                   Supporting manufacturing lines and enterprise distribution networks<br/>
                   <strong className="text-zinc-900 font-medium not-italic block mt-2">Delivering consistent results daily</strong>
@@ -368,16 +382,16 @@ export default function LandingPage() {
               </div>
             </motion.div>
             
-            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className="bg-white rounded-3xl border border-zinc-200 p-10 lg:p-14 shadow-sm flex flex-col justify-center">
+            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className="flex flex-col justify-center lg:pl-10">
               <h2 className="text-2xl sm:text-3xl font-light text-zinc-900 mb-8">
                 Ensuring Distribution Integrity
               </h2>
               <div className="space-y-8 text-lg font-light text-zinc-600">
                 <p>Maintaining high logistical standards for enterprise-level operations</p>
                 <ul className="space-y-5 text-zinc-700">
-                  <li className="flex items-center gap-4 bg-zinc-50 p-4 rounded-xl border border-zinc-100"><CheckCircle2 className="w-5 h-5 text-primary shrink-0"/> <span className="text-base font-medium">Mitigating delays efficiently</span></li>
-                  <li className="flex items-center gap-4 bg-zinc-50 p-4 rounded-xl border border-zinc-100"><CheckCircle2 className="w-5 h-5 text-primary shrink-0"/> <span className="text-base font-medium">Resolving supply chain complexity</span></li>
-                  <li className="flex items-center gap-4 bg-zinc-50 p-4 rounded-xl border border-zinc-100"><CheckCircle2 className="w-5 h-5 text-primary shrink-0"/> <span className="text-base font-medium">Meeting operational targets consistently</span></li>
+                  <li className="flex items-center gap-4 bg-white/80 backdrop-blur-sm p-4 rounded-xl border border-zinc-200/80 shadow-[0_4px_20px_-8px_rgba(0,0,0,0.05)]"><CheckCircle2 className="w-5 h-5 text-primary shrink-0"/> <span className="text-base font-medium">Mitigating delays efficiently</span></li>
+                  <li className="flex items-center gap-4 bg-white/80 backdrop-blur-sm p-4 rounded-xl border border-zinc-200/80 shadow-[0_4px_20px_-8px_rgba(0,0,0,0.05)]"><CheckCircle2 className="w-5 h-5 text-primary shrink-0"/> <span className="text-base font-medium">Resolving supply chain complexity</span></li>
+                  <li className="flex items-center gap-4 bg-white/80 backdrop-blur-sm p-4 rounded-xl border border-zinc-200/80 shadow-[0_4px_20px_-8px_rgba(0,0,0,0.05)]"><CheckCircle2 className="w-5 h-5 text-primary shrink-0"/> <span className="text-base font-medium">Meeting operational targets consistently</span></li>
                 </ul>
               </div>
             </motion.div>
