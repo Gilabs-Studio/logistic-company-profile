@@ -12,125 +12,174 @@ type BackgroundPhase = "before" | "pinned" | "after";
  * Adaptive LERP: the further the target, the faster we snap toward it.
  * Close range → silky smooth. Far range → fast catch-up.
  */
-const adaptiveLerp = (current: number, target: number): number => {
+const adaptiveLerp = (
+  current: number,
+  target: number,
+  progress: number,
+): number => {
   const delta = target - current;
   const distance = Math.abs(delta);
   // Min factor 0.06 (smooth) → Max factor 0.25 (fast snap when >0.6s behind)
-  const factor = Math.min(0.25, 0.06 + distance * 0.3);
+  let factor = Math.min(0.25, 0.06 + distance * 0.3);
+
+  // Magnet at the end (>95% progress) to ensure clean landing
+  if (progress > 0.95) {
+    factor = Math.max(factor, 0.15);
+  }
+
   return current + delta * factor;
 };
 
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [images, setImages] = useState<HTMLImageElement[]>([]);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [loadProgress, setLoadProgress] = useState(0);
 
-  const targetTimeRef = useRef(0);
-  const currentTimeRef = useRef(0);
+  const FRAME_COUNT = 151;
+  const currentFrameRef = useRef(1);
+  const targetTimeRef = useRef(1);
   const rafIdRef = useRef(0);
-  // Guard: don't spam currentTime while browser is still seeking
-  const isSeekingRef = useRef(false);
-
   const [backgroundPhase, setBackgroundPhase] =
     useState<BackgroundPhase>("before");
-  const [videoFailed, setVideoFailed] = useState(false);
-  const [videoReady, setVideoReady] = useState(false);
 
-  // ── 1. Video Loading ────────────────────────────────────────────────
+  // ── 1. Image Preloading ─────────────────────────────────────────────
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
+    let loadedCount = 0;
+    const loadedImages: HTMLImageElement[] = [];
 
-    // Already cached / ready
-    if (video.readyState >= 2) {
-      setVideoReady(true);
-    }
+    const preloadImages = async () => {
+      const promises = Array.from({ length: FRAME_COUNT }).map((_, i) => {
+        return new Promise<void>((resolve) => {
+          const img = new (globalThis.Image as any)();
+          const frameNum = (i + 1).toString().padStart(4, "0");
+          img.src = `/hero-frames/frame_${frameNum}.jpg`;
+          img.onload = () => {
+            loadedCount++;
+            setLoadProgress(Math.floor((loadedCount / FRAME_COUNT) * 100));
+            resolve();
+          };
+          img.onerror = resolve; // Skip failed frames
+          loadedImages[i] = img;
+        });
+      });
 
-    const onReady = () => {
-      setVideoReady(true);
-      setVideoFailed(false);
-    };
-    const onError = () => setVideoFailed(true);
-    // Track seeking state so the rAF loop doesn't pile up seeks
-    const onSeeking = () => {
-      isSeekingRef.current = true;
-    };
-    const onSeeked = () => {
-      isSeekingRef.current = false;
+      await Promise.all(promises);
+      setImages(loadedImages);
+      setImagesLoaded(true);
     };
 
-    video.addEventListener("loadedmetadata", onReady);
-    video.addEventListener("loadeddata", onReady);
-    video.addEventListener("canplay", onReady);
-    video.addEventListener("canplaythrough", onReady);
-    video.addEventListener("error", onError);
-    video.addEventListener("seeking", onSeeking);
-    video.addEventListener("seeked", onSeeked);
-
-    return () => {
-      video.removeEventListener("loadedmetadata", onReady);
-      video.removeEventListener("loadeddata", onReady);
-      video.removeEventListener("canplay", onReady);
-      video.removeEventListener("canplaythrough", onReady);
-      video.removeEventListener("error", onError);
-      video.removeEventListener("seeking", onSeeking);
-      video.removeEventListener("seeked", onSeeked);
-    };
+    preloadImages();
   }, []);
 
-  // ── 2. Scroll-Scrubbing & Adaptive Animation Loop ──────────────────
+  // ── 2. Rendering Logic ──────────────────────────────────────────────
+  const drawFrame = (index: number) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const img = images[index - 1];
+
+    if (ctx && img?.complete) {
+      const { width, height } = canvas;
+      const imgRatio = img.width / img.height;
+      const canvasRatio = width / height;
+
+      let drawWidth = width;
+      let drawHeight = height;
+      let x = 0;
+      let y = 0;
+
+      if (imgRatio > canvasRatio) {
+        drawWidth = height * imgRatio;
+        x = (width - drawWidth) / 2;
+      } else {
+        drawHeight = width / imgRatio;
+        y = (height - drawHeight) / 2;
+      }
+
+      ctx.clearRect(0, 0, width, height);
+      ctx.drawImage(img, x, y, drawWidth, drawHeight);
+    }
+  };
+
+  // ── 3. Scroll & Loop ────────────────────────────────────────────────
   useEffect(() => {
-    const computeTarget = () => {
+    if (!imagesLoaded) return;
+
+    const handleUpdate = () => {
       const section = sectionRef.current;
-      const video = videoRef.current;
       if (!section) return;
 
       const rect = section.getBoundingClientRect();
       const vh = window.innerHeight;
 
-      // Background phase
-      const nextPhase: BackgroundPhase =
-        rect.top > 0 ? "before" : rect.bottom > vh ? "pinned" : "after";
-      setBackgroundPhase((p) => (p === nextPhase ? p : nextPhase));
+      // Update Phase
+      let nextPhase: BackgroundPhase;
+      if (rect.top > 0) {
+        nextPhase = "before";
+      } else if (rect.bottom > vh) {
+        nextPhase = "pinned";
+      } else {
+        nextPhase = "after";
+      }
+      setBackgroundPhase(nextPhase);
 
-      // Target video time
-      if (video?.duration && isFinite(video.duration)) {
-        const scrollable = rect.height - vh;
-        if (scrollable > 0) {
-          const progress = Math.max(0, Math.min(1, -rect.top / scrollable));
-          targetTimeRef.current = progress * video.duration;
-        }
+      // Calculate Target Frame
+      const scrollable = rect.height - vh;
+      if (scrollable > 0) {
+        const progress = Math.max(0, Math.min(1, -rect.top / scrollable));
+        const targetFrame = Math.max(
+          1,
+          Math.min(FRAME_COUNT, Math.floor(progress * FRAME_COUNT)),
+        );
+        targetTimeRef.current = targetFrame;
       }
     };
 
-    const tick = () => {
-      const video = videoRef.current;
+    const renderLoop = () => {
+      const target = targetTimeRef.current;
+      const current = currentFrameRef.current;
 
-      // Skip seek if already seeking — prevents queue pile-up
-      if (video?.duration && isFinite(video.duration) && !isSeekingRef.current) {
-        const target = targetTimeRef.current;
-        const next = adaptiveLerp(currentTimeRef.current, target);
-        currentTimeRef.current = next;
-
-        // ~1 frame threshold at 30fps  → less seeking = smoother
-        if (Math.abs(video.currentTime - next) > 0.033) {
-          video.currentTime = next;
-        }
+      if (Math.abs(target - current) > 0.1) {
+        // Use the sophisticated adaptiveLerp for silky smooth catch-up
+        const next = adaptiveLerp(current, target, target / FRAME_COUNT);
+        currentFrameRef.current = next;
+        drawFrame(Math.round(next));
       }
 
-      rafIdRef.current = requestAnimationFrame(tick);
+      rafIdRef.current = requestAnimationFrame(renderLoop);
     };
 
-    computeTarget();
-    window.addEventListener("scroll", computeTarget, { passive: true });
-    window.addEventListener("resize", computeTarget, { passive: true });
-    rafIdRef.current = requestAnimationFrame(tick);
+    // Initial draw
+    drawFrame(Math.round(currentFrameRef.current));
+
+    window.addEventListener("scroll", handleUpdate, { passive: true });
+    window.addEventListener("resize", handleUpdate, { passive: true });
+    rafIdRef.current = requestAnimationFrame(renderLoop);
 
     return () => {
       cancelAnimationFrame(rafIdRef.current);
-      window.removeEventListener("scroll", computeTarget);
-      window.removeEventListener("resize", computeTarget);
+      window.removeEventListener("scroll", handleUpdate);
+      window.removeEventListener("resize", handleUpdate);
     };
-  }, []);
+  }, [imagesLoaded, images]);
+
+  // Adjust canvas size on resize
+  useEffect(() => {
+    const resizeCanvas = () => {
+      const canvas = canvasRef.current;
+      if (canvas) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        drawFrame(Math.round(currentFrameRef.current));
+      }
+    };
+
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+    return () => window.removeEventListener("resize", resizeCanvas);
+  }, [imagesLoaded]);
 
   let backgroundPositionClass = "absolute inset-x-0 top-0 h-screen";
   if (backgroundPhase === "pinned") {
@@ -144,31 +193,37 @@ export function HeroSection() {
       <div
         className={`${backgroundPositionClass} pointer-events-none -z-10 overflow-hidden`}
       >
-        {/* Scroll-driven video background */}
-        {!videoFailed && (
-          <video
-            ref={videoRef}
-            src="/scroll-bg.webm"
-            muted
-            playsInline
-            preload="auto"
-            autoPlay={false}
-            className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ${
-              videoReady ? "opacity-100" : "opacity-0"
-            }`}
-          />
-        )}
+        {/* Scroll-driven Canvas background */}
+        <canvas
+          ref={canvasRef}
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
+            imagesLoaded ? "opacity-100" : "opacity-0"
+          }`}
+        />
 
-        {/* Fallback static image */}
-        {(videoFailed || !videoReady) && (
-          <Image
-            src="/2-side.webp"
-            alt="Logistics Background"
-            fill
-            priority
-            className="object-cover object-center"
-            sizes="100vw"
-          />
+        {/* Loading Overlay or Fallback */}
+        {!imagesLoaded && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white/50 backdrop-blur-sm transition-opacity">
+            <Image
+              src="/2-side.webp"
+              alt="Logistics Background"
+              fill
+              priority
+              className="object-cover object-center opacity-40"
+              sizes="100vw"
+            />
+            <div className="relative z-20 flex flex-col items-center gap-4">
+              <div className="h-1 w-48 overflow-hidden rounded-full bg-zinc-200">
+                <div
+                  className="h-full bg-zinc-900 transition-all duration-300"
+                  style={{ width: `${loadProgress}%` }}
+                />
+              </div>
+              <span className="text-xs font-light tracking-widest text-zinc-500 uppercase">
+                Optimizing Experience {loadProgress}%
+              </span>
+            </div>
+          </div>
         )}
 
         <div className="absolute inset-0 bg-linear-to-b from-white/70 via-white/85 to-white" />
@@ -219,7 +274,7 @@ export function HeroSection() {
           </motion.div>
         </div>
 
-        <div className="relative min-h-screen py-32 lg:py-40 flex flex-col items-center justify-center">
+        <div className="relative min-h-[150vh] py-32 lg:py-40 flex flex-col items-center justify-center">
           <div className={LANDING_CONTAINER_CLASS}>
             <motion.div
               variants={fadeUp}
