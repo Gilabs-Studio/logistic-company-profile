@@ -1,0 +1,178 @@
+import type { LucideIcon } from "lucide-react";
+import {
+  Activity,
+  CheckCircle2,
+  Globe2,
+  Plane,
+  ShieldCheck,
+  Ship,
+  Truck,
+  Warehouse,
+} from "lucide-react";
+
+export type LandingService = {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  span: string;
+};
+
+export type LandingValue = {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+};
+
+export type SampleArc = {
+  order: number;
+  startLat: number;
+  startLng: number;
+  endLat: number;
+  endLng: number;
+  arcAlt: number;
+  color: string;
+};
+
+export const SERVICES: LandingService[] = [
+  {
+    icon: Plane,
+    title: "Air Freight",
+    description:
+      "Move critical shipments with precision timing and priority handling across global networks",
+    span: "md:col-span-2 lg:col-span-2",
+  },
+  {
+    icon: Ship,
+    title: "Sea Freight",
+    description:
+      "Scale operations seamlessly from consolidated cargo to full container loads on optimized routes",
+    span: "md:col-span-1 lg:col-span-1",
+  },
+  {
+    icon: Truck,
+    title: "Land Transport",
+    description:
+      "Ensure the last mile performs optimally with integrated ground distribution systems",
+    span: "md:col-span-1 lg:col-span-1",
+  },
+  {
+    icon: Warehouse,
+    title: "Warehousing",
+    description:
+      "Turn storage facilities into operational assets that accelerate your distribution workflow",
+    span: "md:col-span-2 lg:col-span-1",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Customs Compliance",
+    description: "Navigate border complexity efficiently so your operations stay uninterrupted",
+    span: "md:col-span-3 lg:col-span-1 bg-zinc-900 text-white invert-colors",
+  },
+];
+
+export const VALUES: LandingValue[] = [
+  {
+    icon: Activity,
+    title: "Complete Control",
+    description: "Real-time visibility and structured execution across every distribution endpoint",
+  },
+  {
+    icon: CheckCircle2,
+    title: "Integrated Operations",
+    description: "Connect into your existing workflows as a unified extension of your team",
+  },
+  {
+    icon: Globe2,
+    title: "Global Reach",
+    description: "International logistics capability executed with localized precision",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Risk Management",
+    description: "Anticipate supply chain disruptions before they impact your business",
+  },
+];
+
+export const SAMPLE_ARCS: SampleArc[] = [
+  {
+    order: 1,
+    startLat: -19.885592,
+    startLng: -43.951191,
+    endLat: -22.9068,
+    endLng: -43.1729,
+    arcAlt: 0.1,
+    color: "#06b6d4",
+  },
+  {
+    order: 1,
+    startLat: 28.6139,
+    startLng: 77.209,
+    endLat: 3.139,
+    endLng: 101.6869,
+    arcAlt: 0.2,
+    color: "#3b82f6",
+  },
+  {
+    order: 1,
+    startLat: -19.885592,
+    startLng: -43.951191,
+    endLat: -1.303396,
+    endLng: 36.852443,
+    arcAlt: 0.5,
+    color: "#6366f1",
+  },
+  {
+    order: 2,
+    startLat: 1.3521,
+    startLng: 103.8198,
+    endLat: 35.6762,
+    endLng: 139.6503,
+    arcAlt: 0.2,
+    color: "#06b6d4",
+  },
+  {
+    order: 2,
+    startLat: 51.5072,
+    startLng: -0.1276,
+    endLat: 3.139,
+    endLng: 101.6869,
+    arcAlt: 0.3,
+    color: "#3b82f6",
+  },
+  {
+    order: 3,
+    startLat: -6.2088,
+    startLng: 106.8456,
+    endLat: 51.5072,
+    endLng: -0.1276,
+    arcAlt: 0.3,
+    color: "#6366f1",
+  },
+  {
+    order: 4,
+    startLat: 11.986597,
+    startLng: 8.571831,
+    endLat: -15.595412,
+    endLng: -56.05918,
+    arcAlt: 0.5,
+    color: "#06b6d4",
+  },
+  {
+    order: 4,
+    startLat: -34.6037,
+    startLng: -58.3816,
+    endLat: 22.3193,
+    endLng: 114.1694,
+    arcAlt: 0.7,
+    color: "#3b82f6",
+  },
+  {
+    order: 4,
+    startLat: 51.5072,
+    startLng: -0.1276,
+    endLat: 48.8566,
+    endLng: -2.3522,
+    arcAlt: 0.1,
+    color: "#6366f1",
+  },
+];
