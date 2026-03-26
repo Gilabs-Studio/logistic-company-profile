@@ -8,54 +8,127 @@ import { LANDING_CONTAINER_CLASS } from "@/features/landing/constants/layout";
 
 type BackgroundPhase = "before" | "pinned" | "after";
 
+/**
+ * Adaptive LERP: the further the target, the faster we snap toward it.
+ * Close range → silky smooth. Far range → fast catch-up.
+ */
+const adaptiveLerp = (current: number, target: number): number => {
+  const delta = target - current;
+  const distance = Math.abs(delta);
+  // Min factor 0.06 (smooth) → Max factor 0.25 (fast snap when >0.6s behind)
+  const factor = Math.min(0.25, 0.06 + distance * 0.3);
+  return current + delta * factor;
+};
+
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  const targetTimeRef = useRef(0);
+  const currentTimeRef = useRef(0);
+  const rafIdRef = useRef(0);
+  // Guard: don't spam currentTime while browser is still seeking
+  const isSeekingRef = useRef(false);
+
   const [backgroundPhase, setBackgroundPhase] =
     useState<BackgroundPhase>("before");
+  const [videoFailed, setVideoFailed] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
 
+  // ── 1. Video Loading ────────────────────────────────────────────────
   useEffect(() => {
-    let rafId = 0;
+    const video = videoRef.current;
+    if (!video) return;
 
-    const updateBackgroundPhase = () => {
-      const section = sectionRef.current;
-      if (!section) {
-        return;
-      }
+    // Already cached / ready
+    if (video.readyState >= 2) {
+      setVideoReady(true);
+    }
 
-      const rect = section.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-
-      let nextPhase: BackgroundPhase;
-      if (rect.top > 0) {
-        nextPhase = "before";
-      } else if (rect.bottom > viewportHeight) {
-        nextPhase = "pinned";
-      } else {
-        nextPhase = "after";
-      }
-
-      setBackgroundPhase((prevPhase) =>
-        prevPhase === nextPhase ? prevPhase : nextPhase,
-      );
+    const onReady = () => {
+      setVideoReady(true);
+      setVideoFailed(false);
+    };
+    const onError = () => setVideoFailed(true);
+    // Track seeking state so the rAF loop doesn't pile up seeks
+    const onSeeking = () => {
+      isSeekingRef.current = true;
+    };
+    const onSeeked = () => {
+      isSeekingRef.current = false;
     };
 
-    const handleViewportUpdate = () => {
-      if (rafId) {
-        cancelAnimationFrame(rafId);
-      }
-      rafId = requestAnimationFrame(updateBackgroundPhase);
-    };
-
-    updateBackgroundPhase();
-    window.addEventListener("scroll", handleViewportUpdate, { passive: true });
-    window.addEventListener("resize", handleViewportUpdate);
+    video.addEventListener("loadedmetadata", onReady);
+    video.addEventListener("loadeddata", onReady);
+    video.addEventListener("canplay", onReady);
+    video.addEventListener("canplaythrough", onReady);
+    video.addEventListener("error", onError);
+    video.addEventListener("seeking", onSeeking);
+    video.addEventListener("seeked", onSeeked);
 
     return () => {
-      if (rafId) {
-        cancelAnimationFrame(rafId);
+      video.removeEventListener("loadedmetadata", onReady);
+      video.removeEventListener("loadeddata", onReady);
+      video.removeEventListener("canplay", onReady);
+      video.removeEventListener("canplaythrough", onReady);
+      video.removeEventListener("error", onError);
+      video.removeEventListener("seeking", onSeeking);
+      video.removeEventListener("seeked", onSeeked);
+    };
+  }, []);
+
+  // ── 2. Scroll-Scrubbing & Adaptive Animation Loop ──────────────────
+  useEffect(() => {
+    const computeTarget = () => {
+      const section = sectionRef.current;
+      const video = videoRef.current;
+      if (!section) return;
+
+      const rect = section.getBoundingClientRect();
+      const vh = window.innerHeight;
+
+      // Background phase
+      const nextPhase: BackgroundPhase =
+        rect.top > 0 ? "before" : rect.bottom > vh ? "pinned" : "after";
+      setBackgroundPhase((p) => (p === nextPhase ? p : nextPhase));
+
+      // Target video time
+      if (video?.duration && isFinite(video.duration)) {
+        const scrollable = rect.height - vh;
+        if (scrollable > 0) {
+          const progress = Math.max(0, Math.min(1, -rect.top / scrollable));
+          targetTimeRef.current = progress * video.duration;
+        }
       }
-      window.removeEventListener("scroll", handleViewportUpdate);
-      window.removeEventListener("resize", handleViewportUpdate);
+    };
+
+    const tick = () => {
+      const video = videoRef.current;
+
+      // Skip seek if already seeking — prevents queue pile-up
+      if (video?.duration && isFinite(video.duration) && !isSeekingRef.current) {
+        const target = targetTimeRef.current;
+        const next = adaptiveLerp(currentTimeRef.current, target);
+        currentTimeRef.current = next;
+
+        // ~1 frame threshold at 30fps  → less seeking = smoother
+        if (Math.abs(video.currentTime - next) > 0.033) {
+          video.currentTime = next;
+        }
+      }
+
+      rafIdRef.current = requestAnimationFrame(tick);
+    };
+
+    computeTarget();
+    window.addEventListener("scroll", computeTarget, { passive: true });
+    window.addEventListener("resize", computeTarget, { passive: true });
+    rafIdRef.current = requestAnimationFrame(tick);
+
+    return () => {
+      cancelAnimationFrame(rafIdRef.current);
+      window.removeEventListener("scroll", computeTarget);
+      window.removeEventListener("resize", computeTarget);
     };
   }, []);
 
@@ -71,14 +144,33 @@ export function HeroSection() {
       <div
         className={`${backgroundPositionClass} pointer-events-none -z-10 overflow-hidden`}
       >
-        <Image
-          src="/2-side.webp"
-          alt="Logistics Background"
-          fill
-          priority
-          className="object-cover object-center"
-          sizes="100vw"
-        />
+        {/* Scroll-driven video background */}
+        {!videoFailed && (
+          <video
+            ref={videoRef}
+            src="/scroll-bg.webm"
+            muted
+            playsInline
+            preload="auto"
+            autoPlay={false}
+            className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ${
+              videoReady ? "opacity-100" : "opacity-0"
+            }`}
+          />
+        )}
+
+        {/* Fallback static image */}
+        {(videoFailed || !videoReady) && (
+          <Image
+            src="/2-side.webp"
+            alt="Logistics Background"
+            fill
+            priority
+            className="object-cover object-center"
+            sizes="100vw"
+          />
+        )}
+
         <div className="absolute inset-0 bg-linear-to-b from-white/70 via-white/85 to-white" />
       </div>
 
