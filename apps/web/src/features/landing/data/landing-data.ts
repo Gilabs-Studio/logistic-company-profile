@@ -14,7 +14,7 @@ export type LandingService = {
   icon: LucideIcon;
   title: string;
   description: string;
-  span: string;
+  image?: string;
 };
 
 export type LandingValue = {
@@ -62,37 +62,52 @@ export type SampleArc = {
 export const SERVICES: LandingService[] = [
   {
     icon: Plane,
-    title: "Air Freight",
+    title: "Air freight",
     description:
-      "Move critical shipments with precision timing and priority handling across global networks",
-    span: "md:col-span-2 lg:col-span-2",
+      "Benefit from our comprehensive air freight solutions for every need, including time-critical Next Flight Out (NFO) shipments, weekly consolidation from Jakarta to Europe and dedicated full or split charter options for oversized or urgent cargo. Our strategic presence in Jakarta, Medan, Surabaya and Batam ensures responsive service, while our access to a worldwide network of over 1,320 offices guarantees superior routing and space allocation.",
+    image: "/services/air.png",
   },
   {
     icon: Ship,
-    title: "Sea Freight",
+    title: "Sea transport",
     description:
-      "Scale operations seamlessly from consolidated cargo to full container loads on optimized routes",
-    span: "md:col-span-1 lg:col-span-1",
+      "Leverage our key hubs (Jakarta, Surabaya and Medan) for faster response times, direct port access and deep regulatory expertise. Our sea freight options include LCL, FCL, buyer's consolidation and shortsea shipping, with real-time tracking visibility to reduce shipment delays. Our end-to-end supply chain covers everything from customs clearance and inland transport to warehousing for seamless operations.",
+    image: "/services/sea.png",
   },
   {
     icon: Truck,
-    title: "Land Transport",
+    title: "Road transport",
     description:
-      "Ensure the last mile performs optimally with integrated ground distribution systems",
-    span: "md:col-span-1 lg:col-span-1",
+      "Access safe, product-oriented road freight solutions across Java, Sumatra and in/out of SEZ areas. Our services are tailored to your time and transportation needs from hazardous materials, temperature-sensitive goods to varying transport volumes. This allows you to react flexibly to the required order volume with groupage transports, LTL (less-than-truck load), FTL (full-truck load) and oversized cargo.",
+    image: "/services/road.png",
   },
   {
-    icon: Warehouse,
-    title: "Warehousing",
+    icon: Activity,
+    title: "Project logistics",
     description:
-      "Turn storage facilities into operational assets that accelerate your distribution workflow",
-    span: "md:col-span-2 lg:col-span-1",
+      "Tap into our in-house project logistics team to ensure seamless operations for all your complex and oversized cargo across all transport modes. Our end-to-end service includes expert consulting, feasibility studies and strong control tower to ensure service quality is consistent and fast issue are resolved promptly.",
+    image: "/services/project.png",
+  },
+  {
+    icon: Activity,
+    title: "Commodity logistics",
+    description:
+      "From raw materials to dangerous goods, fresh products and seafood to manufacturing and pharmaceutical products – as a global logistics company, your goods are transported carefully and appropriately, regardless of their nature – so that your supply chain runs smoothly.",
+    image: "/services/commodity.png",
+  },
+  {
+    icon: Activity,
+    title: "4PL logistics",
+    description:
+      "Keep track of your supply chain with 4PL logistics. Leverage our control tower team for real-time visibility to provide centralized coordination and ensure consistent service quality as well as fast resolution of issues. This saves you both resources and costs.",
+    image: "/services/4pl.png",
   },
   {
     icon: ShieldCheck,
-    title: "Customs Compliance",
-    description: "Navigate border complexity efficiently so your operations stay uninterrupted",
-    span: "md:col-span-3 lg:col-span-1 bg-zinc-900 text-white invert-colors",
+    title: "Customs",
+    description:
+      "Leverage our expert in-house team to ensure greater accuracy, speed and control of your customs clearance. This helps you mitigate the risk of delays or penalties. Our expertise covers complex industries such as oil and gas, automotive and electronics.",
+    image: "/services/customs.png",
   },
 ];
 

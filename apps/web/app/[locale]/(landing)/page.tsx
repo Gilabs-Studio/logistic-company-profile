@@ -25,7 +25,7 @@ export default function LandingPage() {
           <AboutSection />
           <PhilosophySection />
           <ServicesSection />
-          <IndustryExpertiseSection />
+          {/* <IndustryExpertiseSection /> */}
           <SystemThinkingSection />
           <IndustryPositioningSection />
           <TestimonialsSection />
