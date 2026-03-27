@@ -1,38 +1,14 @@
 "use client";
 
-import {
-  AboutSection,
-  ClosingCtaSection,
-  HeroSection,
-  IndustryExpertiseSection,
-  IndustryPositioningSection,
-  PhilosophySection,
-  ServicesSection,
-  SystemThinkingSection,
-  TestimonialsSection,
-} from "@/features/landing/sections";
-import { SiteHeader } from "@/components/layouts/site-header";
-import { SiteFooter } from "@/components/layouts/site-footer";
+import { HeroLoadingProvider } from "@/features/landing/contexts/hero-loading-context";
+import { IntroSplash } from "@/features/landing/components/loading-splash";
+import { PageContent } from "./page-content";
 
 export default function LandingPage() {
   return (
-    <div className="relative bg-white text-zinc-900 selection:bg-primary/20 selection:text-primary overflow-x-hidden font-sans">
-      <SiteHeader />
-      <div className="relative z-10 w-full flex flex-col">
-        <HeroSection />
-
-        <div className="relative z-20 bg-white">
-          <AboutSection />
-          <PhilosophySection />
-          <ServicesSection />
-          {/* <IndustryExpertiseSection /> */}
-          <SystemThinkingSection />
-          <IndustryPositioningSection />
-          <TestimonialsSection />
-          <ClosingCtaSection />
-        </div>
-      </div>
-      <SiteFooter />
-    </div>
+    <HeroLoadingProvider>
+      <IntroSplash />
+      <PageContent />
+    </HeroLoadingProvider>
   );
 }

@@ -1,10 +1,11 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/routing";
 import { fadeUp } from "@/features/landing/constants/animations";
 import { LANDING_CONTAINER_CLASS } from "@/features/landing/constants/layout";
+import { useHeroLoading } from "@/features/landing/contexts/hero-loading-context";
 
 type BackgroundPhase = "before" | "pinned" | "after";
 
@@ -33,9 +34,10 @@ const adaptiveLerp = (
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [images, setImages] = useState<HTMLImageElement[]>([]);
+  const contextRef = useRef<CanvasRenderingContext2D | null>(null);
+  const imagesRef = useRef<HTMLImageElement[]>([]);
   const [imagesLoaded, setImagesLoaded] = useState(false);
-  const [loadProgress, setLoadProgress] = useState(0);
+  const { setLoadProgress } = useHeroLoading();
 
   const FRAME_COUNT = 151;
   const currentFrameRef = useRef(1);
@@ -44,41 +46,72 @@ export function HeroSection() {
   const [backgroundPhase, setBackgroundPhase] =
     useState<BackgroundPhase>("before");
 
-  // ── 1. Image Preloading ─────────────────────────────────────────────
+  // ── 1. Progressive Image Preloading ─────────────────────────────────
   useEffect(() => {
     let loadedCount = 0;
-    const loadedImages: HTMLImageElement[] = [];
+    let isMounted = true;
 
-    const preloadImages = async () => {
-      const promises = Array.from({ length: FRAME_COUNT }).map((_, i) => {
-        return new Promise<void>((resolve) => {
-          const img = new (globalThis.Image as any)();
-          const frameNum = (i + 1).toString().padStart(4, "0");
-          img.src = `/hero-frames/frame_${frameNum}.jpg`;
-          img.onload = () => {
-            loadedCount++;
-            setLoadProgress(Math.floor((loadedCount / FRAME_COUNT) * 100));
-            resolve();
-          };
-          img.onerror = resolve; // Skip failed frames
-          loadedImages[i] = img;
-        });
-      });
-
-      await Promise.all(promises);
-      setImages(loadedImages);
-      setImagesLoaded(true);
+    const updateGlobalProgress = (count: number) => {
+      const progress = Math.floor((count / FRAME_COUNT) * 100);
+      setLoadProgress(progress);
     };
 
-    preloadImages();
-  }, []);
+    // Load first frame immediately
+    const loadFirstFrame = () => {
+      const firstFrameImg = document.createElement("img");
+      const firstFrameNum = "0001";
+      firstFrameImg.src = `/hero-frames/frame_${firstFrameNum}.jpg`;
+
+      firstFrameImg.onload = () => {
+        if (!isMounted) return;
+        loadedCount++;
+        imagesRef.current[0] = firstFrameImg;
+        updateGlobalProgress(loadedCount);
+        setImagesLoaded(true); // Start animation with first frame
+      };
+
+      firstFrameImg.onerror = () => {
+        if (!isMounted) return;
+        setImagesLoaded(true); // Start even if first frame fails
+      };
+    };
+
+    loadFirstFrame();
+
+    // Load remaining frames in background (non-blocking)
+    const loadRemainingFrames = () => {
+      Array.from({ length: FRAME_COUNT - 1 }).forEach((_, i) => {
+        const img = document.createElement("img");
+        const frameNum = (i + 2).toString().padStart(4, "0");
+        img.src = `/hero-frames/frame_${frameNum}.jpg`;
+
+        img.onload = () => {
+          if (!isMounted) return;
+          loadedCount++;
+          imagesRef.current[i + 1] = img;
+          updateGlobalProgress(loadedCount);
+        };
+      });
+    };
+
+    // Schedule remaining loads after first frame
+    const timer = setTimeout(loadRemainingFrames, 100);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
+  }, [setLoadProgress]);
 
   // ── 2. Rendering Logic ──────────────────────────────────────────────
-  const drawFrame = (index: number) => {
+  const drawFrame = useCallback((index: number) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    const img = images[index - 1];
+
+    // Cache 2D context to avoid repeated getContext calls
+    contextRef.current ??= canvas.getContext("2d");
+    const ctx = contextRef.current;
+    const img = imagesRef.current[index - 1];
 
     if (ctx && img?.complete) {
       const { width, height } = canvas;
@@ -101,7 +134,7 @@ export function HeroSection() {
       ctx.clearRect(0, 0, width, height);
       ctx.drawImage(img, x, y, drawWidth, drawHeight);
     }
-  };
+  }, []);
 
   // ── 3. Scroll & Loop ────────────────────────────────────────────────
   useEffect(() => {
@@ -163,7 +196,7 @@ export function HeroSection() {
       window.removeEventListener("scroll", handleUpdate);
       window.removeEventListener("resize", handleUpdate);
     };
-  }, [imagesLoaded, images]);
+  }, [imagesLoaded, drawFrame]);
 
   // Adjust canvas size on resize
   useEffect(() => {
@@ -179,7 +212,7 @@ export function HeroSection() {
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
     return () => window.removeEventListener("resize", resizeCanvas);
-  }, [imagesLoaded]);
+  }, [drawFrame]);
 
   let backgroundPositionClass = "absolute inset-x-0 top-0 h-screen";
   if (backgroundPhase === "pinned") {
@@ -193,38 +226,13 @@ export function HeroSection() {
       <div
         className={`${backgroundPositionClass} pointer-events-none -z-10 overflow-hidden`}
       >
-        {/* Scroll-driven Canvas background */}
+        {/* Canvas background - shown when images are loaded */}
         <canvas
           ref={canvasRef}
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${
             imagesLoaded ? "opacity-100" : "opacity-0"
           }`}
         />
-
-        {/* Loading Overlay or Fallback */}
-        {!imagesLoaded && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white/50 backdrop-blur-sm transition-opacity">
-            <Image
-              src="/2-side.webp"
-              alt="Logistics Background"
-              fill
-              priority
-              className="object-cover object-center opacity-40"
-              sizes="100vw"
-            />
-            <div className="relative z-20 flex flex-col items-center gap-4">
-              <div className="h-1 w-48 overflow-hidden rounded-full bg-zinc-200">
-                <div
-                  className="h-full bg-zinc-900 transition-all duration-300"
-                  style={{ width: `${loadProgress}%` }}
-                />
-              </div>
-              <span className="text-xs font-light tracking-widest text-zinc-500 uppercase">
-                Optimizing Experience {loadProgress}%
-              </span>
-            </div>
-          </div>
-        )}
 
         <div className="absolute inset-0 bg-linear-to-b from-white/70 via-white/85 to-white" />
       </div>
