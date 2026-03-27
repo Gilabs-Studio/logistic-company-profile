@@ -41,7 +41,7 @@ export function IndustryExpertiseSection() {
                 <div className="absolute inset-0 z-0 transition-transform duration-700 group-hover:scale-105">
                   <Image
                     src={industry.image}
-                    alt={industry.title}
+                    alt={t(industry.titleKey)}
                     fill
                     className="object-cover"
                   />
