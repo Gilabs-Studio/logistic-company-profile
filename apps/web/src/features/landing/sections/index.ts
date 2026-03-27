@@ -5,3 +5,5 @@ export { IndustryPositioningSection } from "@/features/landing/sections/industry
 export { PhilosophySection } from "@/features/landing/sections/philosophy-section";
 export { ServicesSection } from "@/features/landing/sections/services-section";
 export { SystemThinkingSection } from "@/features/landing/sections/system-thinking-section";
+export { IndustryExpertiseSection } from "@/features/landing/sections/industry-expertise-section";
+export { TestimonialsSection } from "@/features/landing/sections/testimonials-section";

@@ -5,7 +5,7 @@ import { LANDING_CONTAINER_CLASS } from "@/features/landing/constants/layout";
 
 export function AboutSection() {
   return (
-    <section className="relative py-24 lg:py-40">
+    <section id="about" className="relative py-24 lg:py-40">
       <div className={`${LANDING_CONTAINER_CLASS} grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-center`}>
         <motion.div
           variants={fadeUp}

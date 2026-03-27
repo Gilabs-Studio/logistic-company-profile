@@ -23,6 +23,32 @@ export type LandingValue = {
   description: string;
 };
 
+export type Testimonial = {
+  id: string;
+  name: string;
+  role: string;
+  company: string;
+  content: string;
+  rating: number;
+  avatar?: string;
+};
+
+export type Certification = {
+  id: string;
+  title: string;
+  description: string;
+  icon: string | LucideIcon;
+  pdfUrl?: string;
+};
+
+export type Industry = {
+  id: string;
+  title: string;
+  description: string;
+  icon: LucideIcon;
+  image?: string;
+};
+
 export type SampleArc = {
   order: number;
   startLat: number;
@@ -174,5 +200,89 @@ export const SAMPLE_ARCS: SampleArc[] = [
     endLng: -2.3522,
     arcAlt: 0.1,
     color: "#6366f1",
+  },
+];
+export const TESTIMONIALS: Testimonial[] = [
+  {
+    id: "1",
+    name: "David Oktavianus",
+    role: "Operations Manager",
+    company: "TechGlobal Indonesia",
+    content: "The crew is very friendly and highly responsive. Our logistics needs are always handled with priority.",
+    rating: 5,
+  },
+  {
+    id: "2",
+    name: "Abaw Abaw",
+    role: "Supply Chain Director",
+    company: "Artha Niaga",
+    content: "Trusted export-import service with friendly and patient service. Thank you for the smooth process.",
+    rating: 5,
+  },
+  {
+    id: "3",
+    name: "Thomas Wijaya",
+    role: "Owner",
+    company: "Wijaya Electronics",
+    content: "Fast response, safe goods, and friendly service. Highly recommended for business partners.",
+    rating: 5,
+  },
+];
+
+export const CERTIFICATIONS: Certification[] = [
+  {
+    id: "iso-9001",
+    title: "ISO 9001:2015",
+    description: "Quality Management System ensuring efficient processes and reliable service delivery worldwide.",
+    icon: ShieldCheck,
+  },
+  {
+    id: "iso-45001",
+    title: "ISO 45001:2018",
+    description: "Safety Management System promoting a safe work environment across all transport hubs.",
+    icon: ShieldCheck,
+  },
+  {
+    id: "iso-14001",
+    title: "ISO 14001:2015",
+    description: "Environmental Management System supporting sustainable and eco-friendly logistics solutions.",
+    icon: ShieldCheck,
+  },
+  {
+    id: "halal",
+    title: "Halal Certified",
+    description: "Guarantees Halal-compliant handling and transport for food and pharmaceutical supply chains.",
+    icon: ShieldCheck,
+  },
+];
+
+export const INDUSTRIES: Industry[] = [
+  {
+    id: "machinery",
+    title: "Machinery",
+    description: "Efficient import and export logistics for industrial equipment and heavy machinery.",
+    icon: Activity,
+    image: "/industries/machinery.png",
+  },
+  {
+    id: "automotive",
+    title: "Automotive",
+    description: "Seamless regional distribution for dynamic manufacturing and EV sectors.",
+    icon: Activity,
+    image: "/industries/automotive.png",
+  },
+  {
+    id: "chemicals",
+    title: "Chemicals",
+    description: "Specialized expertise in navigating complex DG handling and dangerous goods logistics.",
+    icon: Activity,
+    image: "/industries/chemicals.png",
+  },
+  {
+    id: "healthcare",
+    title: "Life Sciences",
+    description: "GDP-compliant warehousing and temperature-controlled logistics for pharmaceutical integrity.",
+    icon: Activity,
+    image: "/industries/healthcare.png",
   },
 ];

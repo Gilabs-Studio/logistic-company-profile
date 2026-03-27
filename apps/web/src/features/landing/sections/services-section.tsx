@@ -5,7 +5,7 @@ import { SERVICES } from "@/features/landing/data/landing-data";
 
 export function ServicesSection() {
   return (
-    <section className="relative py-24 lg:py-40 bg-zinc-50">
+    <section id="services" className="relative py-24 lg:py-40 bg-zinc-50">
       <div className={LANDING_CONTAINER_CLASS}>
         <motion.div
           variants={fadeUp}

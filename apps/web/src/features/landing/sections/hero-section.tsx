@@ -229,8 +229,8 @@ export function HeroSection() {
         <div className="absolute inset-0 bg-linear-to-b from-white/70 via-white/85 to-white" />
       </div>
 
-      <div className="relative z-10 flex w-full flex-col pt-20">
-        <div className="relative flex min-h-[85vh] flex-col items-center justify-center overflow-hidden text-center">
+      <div className="relative z-10 flex w-full flex-col">
+        <div className="relative flex h-screen flex-col items-center justify-center overflow-hidden text-center">
           <motion.div className="z-20 w-full max-w-6xl px-6 lg:px-12">
             <motion.h1
               variants={fadeUp}
