@@ -56,7 +56,7 @@ export function SystemThinkingSection() {
           viewport={{ once: true, margin: "-100px" }}
           className="relative lg:h-[800px] w-full flex items-center justify-center lg:justify-end"
         >
-          <div className="w-[500px] h-[500px] lg:w-[800px] lg:h-[800px] opacity-90 right-[-100px] lg:absolute">
+          <div className="relative w-full aspect-square max-w-[350px] sm:max-w-[500px] lg:max-w-none lg:w-[800px] lg:h-[800px] opacity-90 lg:absolute lg:right-[-100px]">
             <World
               data={SAMPLE_ARCS}
               globeConfig={{
