@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/routing";
@@ -8,6 +8,19 @@ import { LANDING_CONTAINER_CLASS } from "@/features/landing/constants/layout";
 import { useHeroLoading } from "@/features/landing/contexts/hero-loading-context";
 
 type BackgroundPhase = "before" | "pinned" | "after";
+
+const HERO_FRAME_COUNT = 151;
+
+const getHeroFrameSrc = (frameNumber: number): string =>
+  `/hero-frames/frame_${frameNumber.toString().padStart(4, "0")}.jpg`;
+
+const preloadHeroFrame = (src: string): Promise<HTMLImageElement | null> =>
+  new Promise((resolve) => {
+    const image = document.createElement("img");
+    image.src = src;
+    image.onload = () => resolve(image);
+    image.onerror = () => resolve(null);
+  });
 
 /**
  * Adaptive LERP: the further the target, the faster we snap toward it.
@@ -39,12 +52,12 @@ export function HeroSection() {
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const { setLoadProgress } = useHeroLoading();
 
-  const FRAME_COUNT = 151;
   const currentFrameRef = useRef(1);
   const targetTimeRef = useRef(1);
   const rafIdRef = useRef(0);
   const [backgroundPhase, setBackgroundPhase] =
     useState<BackgroundPhase>("before");
+  const t = useTranslations("landing");
 
   // ── 1. Progressive Image Preloading ─────────────────────────────────
   useEffect(() => {
@@ -52,50 +65,39 @@ export function HeroSection() {
     let isMounted = true;
 
     const updateGlobalProgress = (count: number) => {
-      const progress = Math.floor((count / FRAME_COUNT) * 100);
+      const progress = Math.floor((count / HERO_FRAME_COUNT) * 100);
       setLoadProgress(progress);
     };
 
     // Load first frame immediately
-    const loadFirstFrame = () => {
-      const firstFrameImg = document.createElement("img");
-      const firstFrameNum = "0001";
-      firstFrameImg.src = `/hero-frames/frame_${firstFrameNum}.jpg`;
+    void preloadHeroFrame(getHeroFrameSrc(1)).then((firstFrameImg) => {
+      if (!isMounted) return;
 
-      firstFrameImg.onload = () => {
-        if (!isMounted) return;
+      if (firstFrameImg) {
         loadedCount++;
         imagesRef.current[0] = firstFrameImg;
         updateGlobalProgress(loadedCount);
-        setImagesLoaded(true); // Start animation with first frame
-      };
+      }
 
-      firstFrameImg.onerror = () => {
-        if (!isMounted) return;
-        setImagesLoaded(true); // Start even if first frame fails
-      };
-    };
-
-    loadFirstFrame();
+      setImagesLoaded(true); // Start animation with first frame or fall back gracefully.
+    });
 
     // Load remaining frames in background (non-blocking)
-    const loadRemainingFrames = () => {
-      Array.from({ length: FRAME_COUNT - 1 }).forEach((_, i) => {
-        const img = document.createElement("img");
-        const frameNum = (i + 2).toString().padStart(4, "0");
-        img.src = `/hero-frames/frame_${frameNum}.jpg`;
-
-        img.onload = () => {
-          if (!isMounted) return;
-          loadedCount++;
-          imagesRef.current[i + 1] = img;
-          updateGlobalProgress(loadedCount);
-        };
-      });
-    };
-
     // Schedule remaining loads after first frame
-    const timer = setTimeout(loadRemainingFrames, 100);
+    const timer = setTimeout(() => {
+      void Promise.all(
+        Array.from({ length: HERO_FRAME_COUNT - 1 }, async (_, index) => {
+          const image = await preloadHeroFrame(getHeroFrameSrc(index + 2));
+          if (!isMounted || !image) {
+            return;
+          }
+
+          loadedCount++;
+          imagesRef.current[index + 1] = image;
+          updateGlobalProgress(loadedCount);
+        }),
+      );
+    }, 100);
 
     return () => {
       isMounted = false;
@@ -164,7 +166,7 @@ export function HeroSection() {
         const progress = Math.max(0, Math.min(1, -rect.top / scrollable));
         const targetFrame = Math.max(
           1,
-          Math.min(FRAME_COUNT, Math.floor(progress * FRAME_COUNT)),
+          Math.min(HERO_FRAME_COUNT, Math.floor(progress * HERO_FRAME_COUNT)),
         );
         targetTimeRef.current = targetFrame;
       }
@@ -176,7 +178,7 @@ export function HeroSection() {
 
       if (Math.abs(target - current) > 0.1) {
         // Use the sophisticated adaptiveLerp for silky smooth catch-up
-        const next = adaptiveLerp(current, target, target / FRAME_COUNT);
+        const next = adaptiveLerp(current, target, target / HERO_FRAME_COUNT);
         currentFrameRef.current = next;
         drawFrame(Math.round(next));
       }
@@ -247,10 +249,10 @@ export function HeroSection() {
               custom={0.1}
               className="mx-auto max-w-7xl text-5xl sm:text-6xl md:text-7xl lg:text-[6.5rem] xl:text-[7rem] font-light leading-[1.05] tracking-tight text-zinc-900"
             >
-              Strategic Logistics
+              {t("hero.titleLine1")}
               <br />
               <span className="font-serif italic text-zinc-400">
-                for Enterprise Operations
+                {t("hero.titleLine2")}
               </span>
             </motion.h1>
 
@@ -261,9 +263,7 @@ export function HeroSection() {
               custom={0.2}
               className="mx-auto mt-12 max-w-2xl text-lg sm:text-xl font-light leading-relaxed text-zinc-500"
             >
-              Connecting every stage of your supply chain from first-mile pickup
-              to final delivery with intelligent tracking and comprehensive
-              operational control
+              {t("hero.description")}
             </motion.p>
 
             <motion.div
@@ -275,7 +275,7 @@ export function HeroSection() {
             >
               <Link href="/login" prefetch={false}>
                 <Button className="cursor-pointer h-14 rounded-full bg-zinc-900 px-10 text-sm tracking-wide text-white shadow-xl shadow-zinc-900/10 hover:bg-zinc-800">
-                  Start a Conversation
+                  {t("hero.cta")}
                 </Button>
               </Link>
             </motion.div>
@@ -292,20 +292,20 @@ export function HeroSection() {
               className="mx-auto max-w-4xl text-center"
             >
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-light leading-snug tracking-tight text-zinc-900">
-                Logistics requires continuous oversight and
+                {t("hero.sectionTitleLine1")}
                 <br />
                 <span className="text-primary font-medium">
-                  control over operational uncertainty
+                  {t("hero.sectionTitleHighlight")}
                 </span>
               </h2>
               <div className="mt-14 h-px w-24 bg-zinc-300 mx-auto" />
               <p className="mt-14 text-xl sm:text-2xl font-light leading-relaxed text-zinc-500">
-                When timelines are rigid and margins are optimized
+                {t("hero.sectionBodyLine1")}
                 <br />
-                you need a reliable infrastructure to run your distribution
+                {t("hero.sectionBodyLine2")}
                 <br />
                 <strong className="text-zinc-900 font-medium pb-1 border-b border-zinc-200">
-                  Systematic execution at scale
+                  {t("hero.sectionBodyHighlight")}
                 </strong>
               </p>
             </motion.div>

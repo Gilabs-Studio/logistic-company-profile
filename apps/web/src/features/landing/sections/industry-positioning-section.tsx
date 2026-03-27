@@ -1,10 +1,13 @@
 import Image from "next/image";
 import { CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { fadeUp } from "@/features/landing/constants/animations";
 import { LANDING_CONTAINER_CLASS } from "@/features/landing/constants/layout";
 
 export function IndustryPositioningSection() {
+  const t = useTranslations("landing");
+
   return (
     <section className="relative py-24 sm:py-32 border-y border-zinc-200 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none -z-10 bg-zinc-50">
@@ -28,16 +31,16 @@ export function IndustryPositioningSection() {
           className="flex flex-col justify-center"
         >
           <h2 className="text-3xl sm:text-4xl font-light text-zinc-900 mb-8">
-            Operating Critical Infrastructures
+            {t("industryPositioning.leftTitle")}
           </h2>
           <div className="space-y-6 text-lg font-light text-zinc-600">
-            <p>Handling high-value goods and time-sensitive cargo with structured precision</p>
+            <p>{t("industryPositioning.leftBody")}</p>
             <div className="h-px w-full bg-zinc-300/60 my-8" />
             <p className="text-zinc-500 italic">
-              Supporting manufacturing lines and enterprise distribution networks
+              {t("industryPositioning.leftDetail")}
               <br />
               <strong className="text-zinc-900 font-medium not-italic block mt-2">
-                Delivering consistent results daily
+                {t("industryPositioning.leftHighlight")}
               </strong>
             </p>
           </div>
@@ -51,22 +54,22 @@ export function IndustryPositioningSection() {
           className="flex flex-col justify-center lg:pl-10"
         >
           <h2 className="text-2xl sm:text-3xl font-light text-zinc-900 mb-8">
-            Ensuring Distribution Integrity
+            {t("industryPositioning.rightTitle")}
           </h2>
           <div className="space-y-8 text-lg font-light text-zinc-600">
-            <p>Maintaining high logistical standards for enterprise-level operations</p>
+            <p>{t("industryPositioning.rightBody")}</p>
             <ul className="space-y-5 text-zinc-700">
               <li className="flex items-center gap-4 bg-white/80 backdrop-blur-sm p-4 rounded-xl border border-zinc-200/80 shadow-[0_4px_20px_-8px_rgba(0,0,0,0.05)]">
                 <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
-                <span className="text-base font-medium">Mitigating delays efficiently</span>
+                <span className="text-base font-medium">{t("industryPositioning.bullets.mitigatingDelays")}</span>
               </li>
               <li className="flex items-center gap-4 bg-white/80 backdrop-blur-sm p-4 rounded-xl border border-zinc-200/80 shadow-[0_4px_20px_-8px_rgba(0,0,0,0.05)]">
                 <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
-                <span className="text-base font-medium">Resolving supply chain complexity</span>
+                <span className="text-base font-medium">{t("industryPositioning.bullets.resolvingComplexity")}</span>
               </li>
               <li className="flex items-center gap-4 bg-white/80 backdrop-blur-sm p-4 rounded-xl border border-zinc-200/80 shadow-[0_4px_20px_-8px_rgba(0,0,0,0.05)]">
                 <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
-                <span className="text-base font-medium">Meeting operational targets consistently</span>
+                <span className="text-base font-medium">{t("industryPositioning.bullets.meetingTargets")}</span>
               </li>
             </ul>
           </div>

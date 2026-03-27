@@ -1,9 +1,12 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { fadeUp } from "@/features/landing/constants/animations";
 import { LANDING_CONTAINER_CLASS } from "@/features/landing/constants/layout";
 
 export function AboutSection() {
+  const t = useTranslations("landing");
+
   return (
     <section id="about" className="relative py-24 lg:py-40">
       <div className={`${LANDING_CONTAINER_CLASS} grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-center`}>
@@ -15,28 +18,26 @@ export function AboutSection() {
           className="lg:col-span-5 flex flex-col justify-center pr-0 lg:pr-8"
         >
           <p className="mb-6 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-            Strategic Advantage
+            {t("about.eyebrow")}
           </p>
           <h2 className="text-4xl sm:text-5xl lg:text-5xl font-light leading-tight tracking-tight text-zinc-900">
-            Built for Complexity
+            {t("about.titleLine1")}
             <br />
-            Trusted for Consistency
+            {t("about.titleLine2")}
           </h2>
 
           <div className="mt-10 space-y-8 text-lg font-light leading-relaxed text-zinc-600">
             <p>
-              <strong className="font-medium text-zinc-900">An operational backbone</strong> for companies
-              requiring high reliability
+              <strong className="font-medium text-zinc-900">{t("about.introStrong")}</strong> {t("about.introText")}
             </p>
             <p>
-              We design logistics systems to eliminate friction and streamline complex supply chains
-              across global markets
+              {t("about.body")}
             </p>
             <div className="p-6 bg-zinc-50 border-l-2 border-primary rounded-r-2xl">
               <p className="text-zinc-700 text-base">
-                {"Ensuring goods move exactly as business demands"}
+                {t("about.highlightIntro")}
                 <span className="text-primary font-medium block mt-2">
-                  Fast when needed and predictable at all times
+                  {t("about.highlightText")}
                 </span>
               </p>
             </div>
@@ -52,7 +53,7 @@ export function AboutSection() {
         >
           <Image
             src="/login.png"
-            alt="Logistics Operations"
+            alt={t("about.imageAlt")}
             fill
             className="object-cover mix-blend-multiply opacity-90"
             sizes="(max-width: 1024px) 100vw, 60vw"

@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { fadeUp } from "@/features/landing/constants/animations";
 import { SERVICES } from "@/features/landing/data/landing-data";
 import { cn } from "@/lib/utils";
@@ -13,6 +14,7 @@ export function ServicesSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const t = useTranslations("landing");
 
   const checkScroll = () => {
     if (scrollRef.current) {
@@ -55,9 +57,9 @@ export function ServicesSection() {
                 viewport={{ once: true, margin: "-100px" }}
               >
                 <h2 className="text-4xl sm:text-5xl font-light tracking-tight text-zinc-900 leading-[1.1]">
-                  Comprehensive services
+                  {t("services.titleLine1")}
                   <br />
-                  <span className="text-zinc-400">for your logistics</span>
+                  <span className="text-zinc-400">{t("services.titleLine2")}</span>
                 </h2>
                 
                 <div className="mt-12 hidden lg:flex items-center gap-4">
@@ -108,7 +110,7 @@ export function ServicesSection() {
             >
               {SERVICES.map((service, index) => (
                 <motion.div
-                  key={service.title}
+                  key={service.titleKey}
                   initial={{ opacity: 0, x: 20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
@@ -119,7 +121,7 @@ export function ServicesSection() {
                     {service.image ? (
                       <Image
                         src={service.image}
-                        alt={service.title}
+                        alt={t(service.titleKey)}
                         fill
                         className="object-cover transition-transform duration-1000 group-hover:scale-110"
                         sizes="(max-width: 768px) 100vw, 480px"
@@ -135,10 +137,10 @@ export function ServicesSection() {
                   </div>
                   
                   <h3 className="text-2xl font-medium text-zinc-900 mb-4 tracking-tight">
-                    {service.title}
+                    {t(service.titleKey)}
                   </h3>
                   <p className="text-base font-light leading-relaxed text-zinc-500 line-clamp-4 lg:pr-12">
-                    {service.description}
+                    {t(service.descriptionKey)}
                   </p>
                 </motion.div>
               ))}
@@ -153,7 +155,7 @@ export function ServicesSection() {
                  <div className="flex gap-3">
                   {SERVICES.map((service, i) => (
                     <div 
-                      key={service.title} 
+                      key={service.titleKey} 
                       className={cn(
                         "h-1.5 rounded-full bg-zinc-100 transition-all duration-300",
                         Math.round(scrollProgress * (SERVICES.length - 1)) === i ? "w-8 bg-primary" : "w-1.5"

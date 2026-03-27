@@ -7,44 +7,43 @@ import {
   ShieldCheck,
   Ship,
   Truck,
-  Warehouse,
 } from "lucide-react";
 
 export type LandingService = {
   icon: LucideIcon;
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
   image?: string;
 };
 
 export type LandingValue = {
   icon: LucideIcon;
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
 };
 
 export type Testimonial = {
   id: string;
-  name: string;
-  role: string;
-  company: string;
-  content: string;
+  nameKey: string;
+  roleKey: string;
+  companyKey: string;
+  contentKey: string;
   rating: number;
   avatar?: string;
 };
 
 export type Certification = {
   id: string;
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
   icon: string | LucideIcon;
   pdfUrl?: string;
 };
 
 export type Industry = {
   id: string;
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
   icon: LucideIcon;
   image?: string;
 };
@@ -62,51 +61,44 @@ export type SampleArc = {
 export const SERVICES: LandingService[] = [
   {
     icon: Plane,
-    title: "Air freight",
-    description:
-      "Benefit from our comprehensive air freight solutions for every need, including time-critical Next Flight Out (NFO) shipments, weekly consolidation from Jakarta to Europe and dedicated full or split charter options for oversized or urgent cargo. Our strategic presence in Jakarta, Medan, Surabaya and Batam ensures responsive service, while our access to a worldwide network of over 1,320 offices guarantees superior routing and space allocation.",
+    titleKey: "services.items.airFreight.title",
+    descriptionKey: "services.items.airFreight.description",
     image: "/services/air.png",
   },
   {
     icon: Ship,
-    title: "Sea transport",
-    description:
-      "Leverage our key hubs (Jakarta, Surabaya and Medan) for faster response times, direct port access and deep regulatory expertise. Our sea freight options include LCL, FCL, buyer's consolidation and shortsea shipping, with real-time tracking visibility to reduce shipment delays. Our end-to-end supply chain covers everything from customs clearance and inland transport to warehousing for seamless operations.",
+    titleKey: "services.items.seaTransport.title",
+    descriptionKey: "services.items.seaTransport.description",
     image: "/services/sea.png",
   },
   {
     icon: Truck,
-    title: "Road transport",
-    description:
-      "Access safe, product-oriented road freight solutions across Java, Sumatra and in/out of SEZ areas. Our services are tailored to your time and transportation needs from hazardous materials, temperature-sensitive goods to varying transport volumes. This allows you to react flexibly to the required order volume with groupage transports, LTL (less-than-truck load), FTL (full-truck load) and oversized cargo.",
+    titleKey: "services.items.roadTransport.title",
+    descriptionKey: "services.items.roadTransport.description",
     image: "/services/road.png",
   },
   {
     icon: Activity,
-    title: "Project logistics",
-    description:
-      "Tap into our in-house project logistics team to ensure seamless operations for all your complex and oversized cargo across all transport modes. Our end-to-end service includes expert consulting, feasibility studies and strong control tower to ensure service quality is consistent and fast issue are resolved promptly.",
+    titleKey: "services.items.projectLogistics.title",
+    descriptionKey: "services.items.projectLogistics.description",
     image: "/services/project.png",
   },
   {
     icon: Activity,
-    title: "Commodity logistics",
-    description:
-      "From raw materials to dangerous goods, fresh products and seafood to manufacturing and pharmaceutical products – as a global logistics company, your goods are transported carefully and appropriately, regardless of their nature – so that your supply chain runs smoothly.",
+    titleKey: "services.items.commodityLogistics.title",
+    descriptionKey: "services.items.commodityLogistics.description",
     image: "/services/commodity.png",
   },
   {
     icon: Activity,
-    title: "4PL logistics",
-    description:
-      "Keep track of your supply chain with 4PL logistics. Leverage our control tower team for real-time visibility to provide centralized coordination and ensure consistent service quality as well as fast resolution of issues. This saves you both resources and costs.",
+    titleKey: "services.items.fourPL.title",
+    descriptionKey: "services.items.fourPL.description",
     image: "/services/4pl.png",
   },
   {
     icon: ShieldCheck,
-    title: "Customs",
-    description:
-      "Leverage our expert in-house team to ensure greater accuracy, speed and control of your customs clearance. This helps you mitigate the risk of delays or penalties. Our expertise covers complex industries such as oil and gas, automotive and electronics.",
+    titleKey: "services.items.customs.title",
+    descriptionKey: "services.items.customs.description",
     image: "/services/customs.png",
   },
 ];
@@ -114,23 +106,23 @@ export const SERVICES: LandingService[] = [
 export const VALUES: LandingValue[] = [
   {
     icon: Activity,
-    title: "Complete Control",
-    description: "Real-time visibility and structured execution across every distribution endpoint",
+    titleKey: "systemThinking.values.completeControl.title",
+    descriptionKey: "systemThinking.values.completeControl.description",
   },
   {
     icon: CheckCircle2,
-    title: "Integrated Operations",
-    description: "Connect into your existing workflows as a unified extension of your team",
+    titleKey: "systemThinking.values.integratedOperations.title",
+    descriptionKey: "systemThinking.values.integratedOperations.description",
   },
   {
     icon: Globe2,
-    title: "Global Reach",
-    description: "International logistics capability executed with localized precision",
+    titleKey: "systemThinking.values.globalReach.title",
+    descriptionKey: "systemThinking.values.globalReach.description",
   },
   {
     icon: ShieldCheck,
-    title: "Risk Management",
-    description: "Anticipate supply chain disruptions before they impact your business",
+    titleKey: "systemThinking.values.riskManagement.title",
+    descriptionKey: "systemThinking.values.riskManagement.description",
   },
 ];
 
@@ -220,26 +212,26 @@ export const SAMPLE_ARCS: SampleArc[] = [
 export const TESTIMONIALS: Testimonial[] = [
   {
     id: "1",
-    name: "David Oktavianus",
-    role: "Operations Manager",
-    company: "TechGlobal Indonesia",
-    content: "The crew is very friendly and highly responsive. Our logistics needs are always handled with priority.",
+    nameKey: "testimonials.items.one.name",
+    roleKey: "testimonials.items.one.role",
+    companyKey: "testimonials.items.one.company",
+    contentKey: "testimonials.items.one.content",
     rating: 5,
   },
   {
     id: "2",
-    name: "Abaw Abaw",
-    role: "Supply Chain Director",
-    company: "Artha Niaga",
-    content: "Trusted export-import service with friendly and patient service. Thank you for the smooth process.",
+    nameKey: "testimonials.items.two.name",
+    roleKey: "testimonials.items.two.role",
+    companyKey: "testimonials.items.two.company",
+    contentKey: "testimonials.items.two.content",
     rating: 5,
   },
   {
     id: "3",
-    name: "Thomas Wijaya",
-    role: "Owner",
-    company: "Wijaya Electronics",
-    content: "Fast response, safe goods, and friendly service. Highly recommended for business partners.",
+    nameKey: "testimonials.items.three.name",
+    roleKey: "testimonials.items.three.role",
+    companyKey: "testimonials.items.three.company",
+    contentKey: "testimonials.items.three.content",
     rating: 5,
   },
 ];
@@ -247,26 +239,26 @@ export const TESTIMONIALS: Testimonial[] = [
 export const CERTIFICATIONS: Certification[] = [
   {
     id: "iso-9001",
-    title: "ISO 9001:2015",
-    description: "Quality Management System ensuring efficient processes and reliable service delivery worldwide.",
+    titleKey: "certifications.iso9001.title",
+    descriptionKey: "certifications.iso9001.description",
     icon: ShieldCheck,
   },
   {
     id: "iso-45001",
-    title: "ISO 45001:2018",
-    description: "Safety Management System promoting a safe work environment across all transport hubs.",
+    titleKey: "certifications.iso45001.title",
+    descriptionKey: "certifications.iso45001.description",
     icon: ShieldCheck,
   },
   {
     id: "iso-14001",
-    title: "ISO 14001:2015",
-    description: "Environmental Management System supporting sustainable and eco-friendly logistics solutions.",
+    titleKey: "certifications.iso14001.title",
+    descriptionKey: "certifications.iso14001.description",
     icon: ShieldCheck,
   },
   {
     id: "halal",
-    title: "Halal Certified",
-    description: "Guarantees Halal-compliant handling and transport for food and pharmaceutical supply chains.",
+    titleKey: "certifications.halal.title",
+    descriptionKey: "certifications.halal.description",
     icon: ShieldCheck,
   },
 ];
@@ -274,29 +266,29 @@ export const CERTIFICATIONS: Certification[] = [
 export const INDUSTRIES: Industry[] = [
   {
     id: "machinery",
-    title: "Machinery",
-    description: "Efficient import and export logistics for industrial equipment and heavy machinery.",
+    titleKey: "industryExpertise.items.machinery.title",
+    descriptionKey: "industryExpertise.items.machinery.description",
     icon: Activity,
     image: "/industries/machinery.png",
   },
   {
     id: "automotive",
-    title: "Automotive",
-    description: "Seamless regional distribution for dynamic manufacturing and EV sectors.",
+    titleKey: "industryExpertise.items.automotive.title",
+    descriptionKey: "industryExpertise.items.automotive.description",
     icon: Activity,
     image: "/industries/automotive.png",
   },
   {
     id: "chemicals",
-    title: "Chemicals",
-    description: "Specialized expertise in navigating complex DG handling and dangerous goods logistics.",
+    titleKey: "industryExpertise.items.chemicals.title",
+    descriptionKey: "industryExpertise.items.chemicals.description",
     icon: Activity,
     image: "/industries/chemicals.png",
   },
   {
     id: "healthcare",
-    title: "Life Sciences",
-    description: "GDP-compliant warehousing and temperature-controlled logistics for pharmaceutical integrity.",
+    titleKey: "industryExpertise.items.healthcare.title",
+    descriptionKey: "industryExpertise.items.healthcare.description",
     icon: Activity,
     image: "/industries/healthcare.png",
   },

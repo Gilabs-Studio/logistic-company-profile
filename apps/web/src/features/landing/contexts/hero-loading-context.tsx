@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import React, { createContext, useContext, useMemo, useState, useCallback, ReactNode } from "react";
 
 interface HeroLoadingContextType {
   isLoading: boolean;
@@ -11,7 +11,7 @@ interface HeroLoadingContextType {
 
 const HeroLoadingContext = createContext<HeroLoadingContextType | undefined>(undefined);
 
-export function HeroLoadingProvider({ children }: { children: ReactNode }) {
+export function HeroLoadingProvider({ children }: Readonly<{ children: ReactNode }>) {
   const [isLoading, setIsLoading] = useState(true);
   const [loadProgress, setLoadProgress] = useState(0);
 
@@ -25,15 +25,18 @@ export function HeroLoadingProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const value = useMemo(
+    () => ({
+      isLoading,
+      loadProgress,
+      setIsLoading,
+      setLoadProgress: handleSetProgress,
+    }),
+    [handleSetProgress, isLoading, loadProgress],
+  );
+
   return (
-    <HeroLoadingContext.Provider
-      value={{
-        isLoading,
-        loadProgress,
-        setIsLoading,
-        setLoadProgress: handleSetProgress,
-      }}
-    >
+    <HeroLoadingContext.Provider value={value}>
       {children}
     </HeroLoadingContext.Provider>
   );

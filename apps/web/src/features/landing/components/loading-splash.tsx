@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { useHeroLoading } from "../contexts/hero-loading-context";
 import { useEffect, useState } from "react";
 
@@ -51,6 +52,7 @@ const textVariants = {
 export function IntroSplash() {
   const { isLoading } = useHeroLoading();
   const [shouldShowContent, setShouldShowContent] = useState(true);
+  const t = useTranslations("landing");
 
   useEffect(() => {
     if (!isLoading) {
@@ -105,7 +107,7 @@ export function IntroSplash() {
             {/* Main Logo/Title */}
             <motion.div variants={logoVariants} className="mb-7 text-center">
               <h1 className="text-5xl font-light tracking-tight text-zinc-900 sm:text-6xl md:text-7xl">
-                Strategic
+                {t("loadingSplash.title")}
               </h1>
             </motion.div>
 
@@ -118,7 +120,7 @@ export function IntroSplash() {
             {/* Subtitle */}
             <motion.div variants={textVariants} className="mb-10 text-center">
               <p className="text-lg font-light tracking-wide text-zinc-500 sm:text-xl">
-                Enterprise Logistics
+                {t("loadingSplash.subtitle")}
               </p>
             </motion.div>
 
@@ -126,9 +128,9 @@ export function IntroSplash() {
             <motion.div
               variants={itemVariants}
               className="flex items-center gap-2"
-              aria-label="Loading"
+              aria-label={t("loading.loadingAria")}
             >
-              <span className="sr-only">Loading</span>
+              <span className="sr-only">{t("loading.loadingAria")}</span>
               <motion.span
                 animate={{ opacity: [0.35, 1, 0.35], scale: [0.85, 1, 0.85] }}
                 transition={{ duration: 0.85, repeat: Infinity, ease: "easeInOut" }}
@@ -149,7 +151,7 @@ export function IntroSplash() {
             {/* Tiny caption */}
             <motion.div variants={itemVariants} className="mt-6 text-center">
               <p className="text-[11px] font-light tracking-[0.35em] text-zinc-400 uppercase">
-                Loading
+                {t("loadingSplash.caption")}
               </p>
             </motion.div>
           </div>

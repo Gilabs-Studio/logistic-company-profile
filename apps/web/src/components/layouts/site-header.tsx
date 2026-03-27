@@ -7,14 +7,14 @@ import { Menu, X, Globe, ChevronDown } from "lucide-react";
 import { Link, usePathname, useRouter } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useLenis } from "lenis/react";
 
 const NAV_LINKS = [
-  { name: "Home", href: "/" },
-  { name: "Solutions", href: "/#services" },
-  { name: "Industries", href: "/#industries" },
-  { name: "About", href: "/#about" },
+  { labelKey: "header.nav.home", href: "/" },
+  { labelKey: "header.nav.solutions", href: "/#services" },
+  { labelKey: "header.nav.industries", href: "/#industries" },
+  { labelKey: "header.nav.about", href: "/#about" },
 ];
 
 export function SiteHeader() {
@@ -25,6 +25,7 @@ export function SiteHeader() {
   const pathname = usePathname();
   const router = useRouter();
   const lenis = useLenis();
+  const t = useTranslations("landing");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -65,7 +66,7 @@ export function SiteHeader() {
         <Link href="/" className="relative h-10 w-32 shrink-0 flex">
           <Image
             src="/logo.png"
-            alt="Logistic Logo"
+            alt={t("header.logoAlt")}
             fill
             className="object-contain"
             priority
@@ -76,12 +77,12 @@ export function SiteHeader() {
         <nav className="hidden md:flex items-center gap-8">
           {NAV_LINKS.map((link) => (
             <Link
-              key={link.name}
+              key={link.labelKey}
               href={link.href as any}
               onClick={(e) => handleScrollTo(e as any, link.href)}
               className="text-sm font-medium text-zinc-600 hover:text-primary transition-colors cursor-pointer"
             >
-              {link.name}
+              {t(link.labelKey)}
             </Link>
           ))}
         </nav>
@@ -114,7 +115,7 @@ export function SiteHeader() {
                       locale === "en" ? "text-primary font-semibold" : "text-zinc-600"
                     )}
                   >
-                    English (EN)
+                      {t("header.languages.en")}
                   </button>
                   <button
                     onClick={() => toggleLanguage("id")}
@@ -123,7 +124,7 @@ export function SiteHeader() {
                       locale === "id" ? "text-primary font-semibold" : "text-zinc-600"
                     )}
                   >
-                    Bahasa (ID)
+                      {t("header.languages.id")}
                   </button>
                 </motion.div>
               )}
@@ -131,7 +132,7 @@ export function SiteHeader() {
           </div>
 
           <Button variant="default" size="sm" className="rounded-full px-6 cursor-pointer">
-            Contact Now
+              {t("header.contactNow")}
           </Button>
         </div>
 
@@ -156,12 +157,12 @@ export function SiteHeader() {
             <div className="flex flex-col p-6 gap-6">
               {NAV_LINKS.map((link) => (
                 <Link
-                  key={link.name}
+                  key={link.labelKey}
                   href={link.href as any}
                   onClick={(e) => handleScrollTo(e as any, link.href)}
                   className="text-lg font-medium text-zinc-900 cursor-pointer"
                 >
-                  {link.name}
+                  {t(link.labelKey)}
                 </Link>
               ))}
               <div className="h-px bg-zinc-100 w-full" />
@@ -171,7 +172,7 @@ export function SiteHeader() {
                     onClick={() => toggleLanguage("en")}
                     className={cn(
                       "text-sm font-medium cursor-pointer",
-                      locale === "en" ? "text-primaryunderline" : "text-zinc-500"
+                      locale === "en" ? "text-primary underline" : "text-zinc-500"
                     )}
                   >
                     EN
@@ -187,7 +188,7 @@ export function SiteHeader() {
                   </button>
                 </div>
                 <Button variant="default" className="rounded-full cursor-pointer">
-                  Contact Now
+                  {t("header.contactNow")}
                 </Button>
               </div>
             </div>

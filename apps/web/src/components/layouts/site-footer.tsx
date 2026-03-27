@@ -1,43 +1,46 @@
 "use client";
 
 import Image from "next/image";
-import { Facebook, Instagram, Linkedin, Twitter, Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
 import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 
 const FOOTER_LINKS = [
   {
-    title: "Solutions",
+    titleKey: "footer.sections.solutions.title",
     links: [
-      { name: "Air Freight", href: "/#services" },
-      { name: "Sea Freight", href: "/#services" },
-      { name: "Land Transport", href: "/#services" },
-      { name: "Warehousing", href: "/#services" },
-      { name: "Customs Compliance", href: "/#services" },
+      { nameKey: "footer.sections.solutions.links.airFreight", href: "/#services" },
+      { nameKey: "footer.sections.solutions.links.seaFreight", href: "/#services" },
+      { nameKey: "footer.sections.solutions.links.landTransport", href: "/#services" },
+      { nameKey: "footer.sections.solutions.links.warehousing", href: "/#services" },
+      { nameKey: "footer.sections.solutions.links.customsCompliance", href: "/#services" },
     ],
   },
   {
-    title: "Industries",
+    titleKey: "footer.sections.industries.title",
     links: [
-      { name: "Machinery", href: "/#industries" },
-      { name: "Automotive", href: "/#industries" },
-      { name: "Chemicals", href: "/#industries" },
-      { name: "Life Sciences", href: "/#industries" },
-      { name: "Agriculture", href: "/#industries" },
+      { nameKey: "footer.sections.industries.links.machinery", href: "/#industries" },
+      { nameKey: "footer.sections.industries.links.automotive", href: "/#industries" },
+      { nameKey: "footer.sections.industries.links.chemicals", href: "/#industries" },
+      { nameKey: "footer.sections.industries.links.lifeSciences", href: "/#industries" },
+      { nameKey: "footer.sections.industries.links.agriculture", href: "/#industries" },
     ],
   },
   {
-    title: "Company",
+    titleKey: "footer.sections.company.title",
     links: [
-      { name: "About Us", href: "/#about" },
-      { name: "Our Network", href: "/#" },
-      { name: "Compliance", href: "/#" },
-      { name: "Sustainability", href: "/#" },
-      { name: "Careers", href: "/#" },
+      { nameKey: "footer.sections.company.links.aboutUs", href: "/#about" },
+      { nameKey: "footer.sections.company.links.ourNetwork", href: "/#" },
+      { nameKey: "footer.sections.company.links.compliance", href: "/#" },
+      { nameKey: "footer.sections.company.links.sustainability", href: "/#" },
+      { nameKey: "footer.sections.company.links.careers", href: "/#" },
     ],
   },
 ];
 
 export function SiteFooter() {
+  const t = useTranslations("landing");
+
   return (
     <footer className="bg-zinc-900 text-zinc-400 py-20">
       <div className="container mx-auto px-6">
@@ -47,43 +50,42 @@ export function SiteFooter() {
             <Link href="/" className="relative h-10 w-32 block">
               <Image
                 src="/logo.png"
-                alt="Logistic Logo"
+                alt={t("footer.logoAlt")}
                 fill
                 className="object-contain brightness-0 invert"
               />
             </Link>
             <p className="text-zinc-500 max-w-sm leading-relaxed">
-              Global logistics solutions engineered for precision and scale. 
-              Connecting markets and empowering businesses with seamless supply chain integration.
+              {t("footer.description")}
             </p>
             <div className="flex items-center gap-4">
-              <a href="#" className="w-10 h-10 rounded-full border border-zinc-800 flex items-center justify-center hover:bg-primary hover:border-primary hover:text-white transition-all cursor-pointer">
-                <Linkedin className="w-4 h-4" />
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full border border-zinc-800 flex items-center justify-center hover:bg-primary hover:border-primary hover:text-white transition-all cursor-pointer">
-                <Twitter className="w-4 h-4" />
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full border border-zinc-800 flex items-center justify-center hover:bg-primary hover:border-primary hover:text-white transition-all cursor-pointer">
-                <Facebook className="w-4 h-4" />
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full border border-zinc-800 flex items-center justify-center hover:bg-primary hover:border-primary hover:text-white transition-all cursor-pointer">
-                <Instagram className="w-4 h-4" />
-              </a>
+              <button type="button" className="w-10 h-10 rounded-full border border-zinc-800 flex items-center justify-center text-[10px] font-semibold uppercase tracking-[0.2em] hover:bg-primary hover:border-primary hover:text-white transition-all cursor-pointer" aria-label="LinkedIn">
+                in
+              </button>
+              <button type="button" className="w-10 h-10 rounded-full border border-zinc-800 flex items-center justify-center text-[10px] font-semibold uppercase tracking-[0.2em] hover:bg-primary hover:border-primary hover:text-white transition-all cursor-pointer" aria-label="X">
+                x
+              </button>
+              <button type="button" className="w-10 h-10 rounded-full border border-zinc-800 flex items-center justify-center text-[10px] font-semibold uppercase tracking-[0.2em] hover:bg-primary hover:border-primary hover:text-white transition-all cursor-pointer" aria-label="Facebook">
+                f
+              </button>
+              <button type="button" className="w-10 h-10 rounded-full border border-zinc-800 flex items-center justify-center text-[10px] font-semibold uppercase tracking-[0.2em] hover:bg-primary hover:border-primary hover:text-white transition-all cursor-pointer" aria-label="Instagram">
+                ig
+              </button>
             </div>
           </div>
 
           {/* Quick Links */}
           {FOOTER_LINKS.map((group) => (
-            <div key={group.title}>
-              <h4 className="text-white font-semibold mb-6">{group.title}</h4>
+            <div key={group.titleKey}>
+              <h4 className="text-white font-semibold mb-6">{t(group.titleKey)}</h4>
               <ul className="space-y-4">
                 {group.links.map((link) => (
-                  <li key={link.name}>
+                  <li key={link.nameKey}>
                     <Link
                       href={link.href as any}
                       className="hover:text-primary transition-colors cursor-pointer"
                     >
-                      {link.name}
+                      {t(link.nameKey)}
                     </Link>
                   </li>
                 ))}
@@ -93,7 +95,7 @@ export function SiteFooter() {
 
           {/* Contact Info */}
           <div>
-            <h4 className="text-white font-semibold mb-6">Contact</h4>
+            <h4 className="text-white font-semibold mb-6">{t("footer.contact.title")}</h4>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-primary shrink-0 mt-0.5" />
@@ -117,12 +119,12 @@ export function SiteFooter() {
 
         <div className="pt-8 border-t border-zinc-800 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-sm text-zinc-600">
-            2026 © GILABS Integrated Management System. All rights reserved.
+            {t("footer.copyright")}
           </p>
           <div className="flex gap-8 text-sm text-zinc-600">
-            <a href="#" className="hover:text-zinc-400 transition-colors cursor-pointer">Imprint</a>
-            <a href="#" className="hover:text-zinc-400 transition-colors cursor-pointer">Privacy Policy</a>
-            <a href="#" className="hover:text-zinc-400 transition-colors cursor-pointer">Terms & Conditions</a>
+            <button type="button" className="hover:text-zinc-400 transition-colors cursor-pointer">{t("footer.legal.imprint")}</button>
+            <button type="button" className="hover:text-zinc-400 transition-colors cursor-pointer">{t("footer.legal.privacyPolicy")}</button>
+            <button type="button" className="hover:text-zinc-400 transition-colors cursor-pointer">{t("footer.legal.termsAndConditions")}</button>
           </div>
         </div>
       </div>
