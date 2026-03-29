@@ -165,10 +165,13 @@ export const landingEn = {
       },
     },
     closingCta: {
-      titleLine1: "Solidifying Your Distribution Network",
-      titleLine2: "Built Upon Dependable Execution",
-      intro: "Establishing effective logistics execution",
-      emphasis: "Building structured systems for long-term operational success",
+      titleLine1: "Your Logistics Matters",
+      titleLine2: "Connect With Us Today",
+      newsletter: {
+        title: "Join our newsletter to receive the latest industry insights, special offers and company updates.",
+        placeholder: "Your Email Address",
+        button: "Subscribe",
+      },
       primaryCta: "Design Your Network",
       secondaryCta: "Contact Operations",
       consult: "Consult Associates",
@@ -227,10 +230,11 @@ export const landingEn = {
       contact: {
         title: "Contact",
       },
-      copyright: "2026 © GILABS Integrated Management System. All rights reserved.",
+      copyright: "© 2026 All Rights Reserved",
+      largeText: "Logistic",
       legal: {
         imprint: "Imprint",
-        privacyPolicy: "Privacy Policy",
+        privacyPolicy: "Privacy & Policy",
         termsAndConditions: "Terms & Conditions",
       },
     },

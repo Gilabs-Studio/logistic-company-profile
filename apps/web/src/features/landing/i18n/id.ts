@@ -165,13 +165,16 @@ export const landingId = {
       },
     },
     closingCta: {
-      titleLine1: "Memperkuat Jaringan Distribusi Anda",
-      titleLine2: "Dibangun di Atas Eksekusi yang Andal",
-      intro: "Membangun eksekusi logistik yang efektif",
-      emphasis: "Membangun sistem terstruktur untuk kesuksesan operasional jangka panjang",
+      titleLine1: "Logistik Anda Penting",
+      titleLine2: "Hubungi Kami Hari Ini",
+      newsletter: {
+        title: "Daftar buletin kami untuk menerima wawasan industri terbaru, penawaran khusus, dan pembaruan perusahaan.",
+        placeholder: "Alamat Email Anda",
+        button: "Berlangganan",
+      },
       primaryCta: "Rancang Jaringan Anda",
       secondaryCta: "Hubungi Operasional",
-      consult: "Konsultasi dengan Tim",
+      consult: "Konsultasikan dengan Rekan",
       initialize: "Mulai Percakapan",
     },
     header: {
@@ -227,10 +230,11 @@ export const landingId = {
       contact: {
         title: "Kontak",
       },
-      copyright: "2026 © GILABS Integrated Management System. Seluruh hak cipta dilindungi.",
+      copyright: "© 2026 Hak Cipta Dilindungi",
+      largeText: "Logistic",
       legal: {
-        imprint: "Impresum",
-        privacyPolicy: "Kebijakan Privasi",
+        imprint: "Imprint",
+        privacyPolicy: "Privasi & Kebijakan",
         termsAndConditions: "Syarat & Ketentuan",
       },
     },
